@@ -150,6 +150,7 @@ data.type = 'ORTHO'
 data.ortho_scale = 8.2
 views=[('front',(7,10,5)),('rear',(-7,-10,4.3)),('side',(10,0,2.1))]
 if '--front-only' in args: views=views[:1]
+if '--rear-only' in args: views=[v for v in views if v[0]=='rear']
 for view, location in views:
     cam.location = location
     cam.rotation_euler = (Vector((0,-0.15,0))-cam.location).to_track_quat('-Z','Y').to_euler()

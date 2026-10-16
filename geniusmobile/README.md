@@ -12,6 +12,9 @@ The new TXD name and mission upgrade changes matter.
 
 ## Revision 2
 
+Exhaust follow-up: both pipes now extend 35 cm farther inward to enter the
+rear apron. The tips, bed cover, collision and textures are unchanged.
+
 Fixes the load crash found in the first Geniusmobile: removing optional cargo
 atomics left `extra1`/`extra2` frames behind. SA assumes each `extraN` frame has
 an atomic. Those two unused frames now have ordinary names, preserving the
@@ -76,7 +79,7 @@ the user's original geometry-cutting helper. Collision retains the donor's
 component/damage spheres and extends it for the cover, scoop and lower trim;
 the base shell has not been stretched or resized.
 
-All 507 asset checks passed, and a repeat build reproduces the DFF/TXD/atlas
+All 509 asset checks passed, and a repeat build reproduces the DFF/TXD/atlas
 byte for byte. This establishes offline file consistency. It does not replace
 the pending game checks listed in the integration note.
 

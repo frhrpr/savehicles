@@ -7,6 +7,9 @@ new dictionary retains the two Picador textures and adds `genius_detail128`.
 
 ## Revision 2 — replace the old DFF
 
+Exhaust follow-up: pipes now extend inward to join the rear apron. Tip positions,
+particle point, cover and TXD are unchanged; replace only the DFF.
+
 Fixes the load crash from empty `extra1`/`extra2` frames by renaming them to
 ordinary `cargo_removed_*` frames. Every remaining `extraN` must have an atomic;
 removing only its geometry/atomic is unsafe in SA. The build and validator now
@@ -61,7 +64,7 @@ Your revision-1 in-game diagnosis confirmed that geometry, textures, collision,
 lamps, paint and draw order loaded correctly once the empty extras were fixed.
 Revision 2 has not yet been tested in GTA here.
 
-507 asset checks passed, including transparent-last draw order, original lamp
+509 asset checks passed, including transparent-last draw order, original lamp
 geometry/material preservation, paint modulation, damage/LOD structure, native
 format reads, a collision probe hitting the new bed cover, and independent
 attachment probes for the sills, both bumper variants and both scoop variants.

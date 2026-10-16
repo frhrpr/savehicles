@@ -1,11 +1,11 @@
 {
   "revision": 2,
-  "checks_passed": 507,
+  "checks_passed": 509,
   "stored_triangles": 5072,
   "intact_visible_triangles_four_stock_wheels": 3760,
   "transparent_geometries": 7,
   "draw_order": "all opaque batches before transparent batches",
-  "dff_sha256": "12fde2b9a048436888b7d60e283f8ce2ee95d6e63868d3d628d01c88616f8edc",
+  "dff_sha256": "78b8b1891d3e639d7c5f1ae5e309e9806e6ca927b8183a1fae3096192cbbc85d",
   "txd_sha256": "5b83df00d404079480691b650f130a56ab979ea04b9d7907820d163bcd0bf201",
   "runtime_tests": "Pending: user tests in GTA SA 1.0 US / SilentPatch",
   "checks": [
@@ -500,6 +500,8 @@
     "bump_rear_dam: apron intersects donor bumper in x interval -1.1..-0.5",
     "bump_rear_dam: apron intersects donor bumper in x interval -0.5..0.5",
     "bump_rear_dam: apron intersects donor bumper in x interval 0.5..1.1",
+    "Exhaust -1: pipe intersects rear apron instead of floating",
+    "Exhaust 1: pipe intersects rear apron instead of floating",
     "door_lf_ok: vertical hinge swing clears sill by over 4mm",
     "door_rf_ok: vertical hinge swing clears sill by over 4mm",
     "door_lf_dam: vertical hinge swing clears sill by over 4mm",

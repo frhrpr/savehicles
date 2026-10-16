@@ -378,14 +378,15 @@ def add_rear_valance(part, damaged=False, lod=False, sampler=None):
 
 
 def add_exhaust(part):
-    # Two modest polished tips, with ring walls and a dark internal cap.
+    # Extend both pipes beneath the rear body; retain the polished mouths and
+    # recessed caps at their original positions.
     part.g.tris=[]
     segments=10
     for center in [-.77,.77]:
         for i in range(segments):
             a,b=2*math.pi*i/segments,2*math.pi*(i+1)/segments
             point=lambda theta,y,r:(center+math.cos(theta)*r,y,-.465+math.sin(theta)*r)
-            part.face(list(reversed([point(a,-2.80,.062),point(a,-2.98,.062),point(b,-2.98,.062),point(b,-2.80,.062)])),'chrome')
+            part.face(list(reversed([point(a,-2.45,.062),point(a,-2.98,.062),point(b,-2.98,.062),point(b,-2.45,.062)])),'chrome')
             part.face(list(reversed([point(a,-2.98,.062),point(a,-2.98,.043),point(b,-2.98,.043),point(b,-2.98,.062)])),'chrome')
             part.face(list(reversed([point(a,-2.98,.043),point(a,-2.88,.043),point(b,-2.88,.043),point(b,-2.98,.043)])),'rubber')
         ring=[(center+math.cos(2*math.pi*i/segments)*.043,-2.88,-.465+math.sin(2*math.pi*i/segments)*.043) for i in range(segments)]

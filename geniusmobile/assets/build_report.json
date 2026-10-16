@@ -3,7 +3,7 @@
   "model": "geniusmb",
   "donor": "picador",
   "donor_sha256": "8f54e0e752231cb36570419652b2deae4e60cf8ba9c871d9bbdf41621243cce5",
-  "dff_sha256": "12fde2b9a048436888b7d60e283f8ce2ee95d6e63868d3d628d01c88616f8edc",
+  "dff_sha256": "78b8b1891d3e639d7c5f1ae5e309e9806e6ca927b8183a1fae3096192cbbc85d",
   "txd_sha256": "5b83df00d404079480691b650f130a56ab979ea04b9d7907820d163bcd0bf201",
   "stored_triangles": 5072,
   "stripe_pieces": {

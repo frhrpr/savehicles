@@ -73,6 +73,12 @@ def check_fit(clump,donor,check):
             for lo,hi in [(-1.1,-.5),(-.5,.5),(.5,1.1)]:
                 check(any(lo<p[0]<hi for p in hits),
                       f'{name}: apron intersects donor bumper in x interval {lo}..{hi}')
+    # The exhaust tubes must enter the rear apron on both sides. Short loose
+    # tips remain valid DFF geometry, but fail this physical attachment probe.
+    exhaust_hits=kit_intersections(parts['exhaust_ok'],parts['bump_rear_ok'])
+    for sign in [-1,1]:
+        check(any(p[0]*sign>.65 for p in exhaust_hits),
+              f'Exhaust {sign}: pipe intersects rear apron instead of floating')
     # Each door rotates around a vertical hinge. Verify all its vertices stay
     # above the actual new sill, on both sides and for both damage variants.
     kit_points,triangles,custom=parts['chassis']

@@ -1,0 +1,150 @@
+{
+  "vehicle": "Linden 1800",
+  "replacement": "Premier (426)",
+  "donor_sha256": "b73c956fe335b58e00f09b97dda662de7546d27e828211db46e5e4d8e033f86e",
+  "dff_sha256": "f5f0ac40c8a414d57d3ea5745d067d9d134df59dc73166e6e1613adf3719bf87",
+  "triangles_before": 2927,
+  "triangles_after": 2868,
+  "new_texture": {
+    "name": "linden128",
+    "size": [
+      128,
+      128
+    ],
+    "mip_levels": 8
+  },
+  "parts": [
+    {
+      "part": "chassis_vlo",
+      "triangles_before": 60,
+      "triangles_after": 60,
+      "vertices": 110
+    },
+    {
+      "part": "chassis",
+      "triangles_before": 1236,
+      "triangles_after": 1177,
+      "vertices": 1731
+    },
+    {
+      "part": "exhaust_ok",
+      "triangles_before": 16,
+      "triangles_after": 16,
+      "vertices": 18
+    },
+    {
+      "part": "boot_dam",
+      "triangles_before": 26,
+      "triangles_after": 26,
+      "vertices": 27
+    },
+    {
+      "part": "boot_ok",
+      "triangles_before": 40,
+      "triangles_after": 40,
+      "vertices": 39
+    },
+    {
+      "part": "bump_front_dam",
+      "triangles_before": 111,
+      "triangles_after": 111,
+      "vertices": 122
+    },
+    {
+      "part": "bump_front_ok",
+      "triangles_before": 160,
+      "triangles_after": 160,
+      "vertices": 152
+    },
+    {
+      "part": "bump_rear_dam",
+      "triangles_before": 111,
+      "triangles_after": 111,
+      "vertices": 103
+    },
+    {
+      "part": "bump_rear_ok",
+      "triangles_before": 150,
+      "triangles_after": 150,
+      "vertices": 130
+    },
+    {
+      "part": "door_lf_dam",
+      "triangles_before": 91,
+      "triangles_after": 91,
+      "vertices": 128
+    },
+    {
+      "part": "door_lf_ok",
+      "triangles_before": 137,
+      "triangles_after": 137,
+      "vertices": 172
+    },
+    {
+      "part": "door_lr_dam",
+      "triangles_before": 65,
+      "triangles_after": 65,
+      "vertices": 104
+    },
+    {
+      "part": "door_lr_ok",
+      "triangles_before": 83,
+      "triangles_after": 83,
+      "vertices": 117
+    },
+    {
+      "part": "door_rf_ok",
+      "triangles_before": 137,
+      "triangles_after": 137,
+      "vertices": 172
+    },
+    {
+      "part": "door_rf_dam",
+      "triangles_before": 91,
+      "triangles_after": 91,
+      "vertices": 128
+    },
+    {
+      "part": "door_rr_dam",
+      "triangles_before": 65,
+      "triangles_after": 65,
+      "vertices": 104
+    },
+    {
+      "part": "door_rr_ok",
+      "triangles_before": 83,
+      "triangles_after": 83,
+      "vertices": 117
+    },
+    {
+      "part": "windscreen_dam",
+      "triangles_before": 12,
+      "triangles_after": 12,
+      "vertices": 15
+    },
+    {
+      "part": "windscreen_ok",
+      "triangles_before": 12,
+      "triangles_after": 12,
+      "vertices": 14
+    },
+    {
+      "part": "bonnet_dam",
+      "triangles_before": 45,
+      "triangles_after": 45,
+      "vertices": 65
+    },
+    {
+      "part": "bonnet_ok",
+      "triangles_before": 62,
+      "triangles_after": 62,
+      "vertices": 60
+    },
+    {
+      "part": "wheel",
+      "triangles_before": 134,
+      "triangles_after": 134,
+      "vertices": 137
+    }
+  ]
+}

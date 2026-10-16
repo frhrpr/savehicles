@@ -1,3 +1,9 @@
+# GTA SA vehicle prototypes
+
+The current SAVibe build is **[the Geniusmobile](geniusmobile/README.md)**:
+a Picador street/show-truck conversion with game assets, source and integration
+notes. The earlier Linden proof of concept is documented below.
+
 # Linden 1800 — GTA San Andreas vehicle MVP
 
 A fictional late-1980s sedan for **classic PC GTA SA 1.0 / downgraded SA**.

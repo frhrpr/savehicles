@@ -2,3 +2,6 @@ reference/
 __pycache__/
 *.blend1
 previews/*.blend
+/geniusmobile/assets/decoded/
+/geniusmobile/assets/mission_preview.dff
+/geniusmobile/previews/*.blend

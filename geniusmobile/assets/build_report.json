@@ -1,0 +1,172 @@
+{
+  "model": "geniusmb",
+  "donor": "picador",
+  "donor_sha256": "8f54e0e752231cb36570419652b2deae4e60cf8ba9c871d9bbdf41621243cce5",
+  "dff_sha256": "0d39243a061bfd1b252a17237123780a351ab202797976f31f37a5a3d58f83ce",
+  "txd_sha256": "5b83df00d404079480691b650f130a56ab979ea04b9d7907820d163bcd0bf201",
+  "stored_triangles": 4306,
+  "stripe_pieces": {
+    "bonnet_ok": 24,
+    "bonnet_dam": 20,
+    "boot_ok": 20,
+    "boot_dam": 24,
+    "chassis_vlo": 32,
+    "chassis": 48
+  },
+  "collision": {
+    "before": {
+      "spheres": 32,
+      "boxes": 0,
+      "faces": 12,
+      "shadow_faces": 236
+    },
+    "after": {
+      "spheres": 32,
+      "boxes": 6,
+      "faces": 72,
+      "shadow_faces": 296
+    }
+  },
+  "parts": [
+    {
+      "part": "wheel",
+      "before_additions": 134,
+      "triangles": 134,
+      "vertices": 161
+    },
+    {
+      "part": "door_lf_ok",
+      "before_additions": 97,
+      "triangles": 97,
+      "vertices": 137
+    },
+    {
+      "part": "door_lf_dam",
+      "before_additions": 99,
+      "triangles": 99,
+      "vertices": 159
+    },
+    {
+      "part": "bonnet_ok",
+      "before_additions": 262,
+      "triangles": 336,
+      "vertices": 533
+    },
+    {
+      "part": "bonnet_dam",
+      "before_additions": 207,
+      "triangles": 281,
+      "vertices": 480
+    },
+    {
+      "part": "boot_ok",
+      "before_additions": 128,
+      "triangles": 128,
+      "vertices": 243
+    },
+    {
+      "part": "boot_dam",
+      "before_additions": 130,
+      "triangles": 130,
+      "vertices": 253
+    },
+    {
+      "part": "door_rf_ok",
+      "before_additions": 97,
+      "triangles": 97,
+      "vertices": 137
+    },
+    {
+      "part": "door_rf_dam",
+      "before_additions": 94,
+      "triangles": 93,
+      "vertices": 156
+    },
+    {
+      "part": "windscreen_ok",
+      "before_additions": 9,
+      "triangles": 9,
+      "vertices": 11
+    },
+    {
+      "part": "windscreen_dam",
+      "before_additions": 10,
+      "triangles": 10,
+      "vertices": 14
+    },
+    {
+      "part": "chassis_vlo",
+      "before_additions": 230,
+      "triangles": 342,
+      "vertices": 666
+    },
+    {
+      "part": "bump_front_ok",
+      "before_additions": 144,
+      "triangles": 182,
+      "vertices": 184
+    },
+    {
+      "part": "plate_front_ok",
+      "before_additions": 4,
+      "triangles": 4,
+      "vertices": 8
+    },
+    {
+      "part": "bump_front_dam",
+      "before_additions": 89,
+      "triangles": 127,
+      "vertices": 176
+    },
+    {
+      "part": "plate_front_dam",
+      "before_additions": 4,
+      "triangles": 4,
+      "vertices": 8
+    },
+    {
+      "part": "bump_rear_ok",
+      "before_additions": 106,
+      "triangles": 130,
+      "vertices": 124
+    },
+    {
+      "part": "plate_rear_ok",
+      "before_additions": 4,
+      "triangles": 4,
+      "vertices": 8
+    },
+    {
+      "part": "bump_rear_dam",
+      "before_additions": 84,
+      "triangles": 108,
+      "vertices": 124
+    },
+    {
+      "part": "plate_rear_dam",
+      "before_additions": 4,
+      "triangles": 4,
+      "vertices": 8
+    },
+    {
+      "part": "chassis",
+      "before_additions": 1751,
+      "triangles": 1851,
+      "vertices": 2612
+    },
+    {
+      "part": "exhaust_ok",
+      "before_additions": 16,
+      "triangles": 136,
+      "vertices": 260
+    }
+  ],
+  "texture": {
+    "name": "genius_detail128",
+    "size": [
+      128,
+      128
+    ],
+    "mip_levels": 8
+  }
+}

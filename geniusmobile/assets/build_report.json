@@ -1,10 +1,11 @@
 {
+  "revision": 2,
   "model": "geniusmb",
   "donor": "picador",
   "donor_sha256": "8f54e0e752231cb36570419652b2deae4e60cf8ba9c871d9bbdf41621243cce5",
-  "dff_sha256": "0d39243a061bfd1b252a17237123780a351ab202797976f31f37a5a3d58f83ce",
+  "dff_sha256": "12fde2b9a048436888b7d60e283f8ce2ee95d6e63868d3d628d01c88616f8edc",
   "txd_sha256": "5b83df00d404079480691b650f130a56ab979ea04b9d7907820d163bcd0bf201",
-  "stored_triangles": 4306,
+  "stored_triangles": 5072,
   "stripe_pieces": {
     "bonnet_ok": 24,
     "bonnet_dam": 20,
@@ -49,14 +50,14 @@
     {
       "part": "bonnet_ok",
       "before_additions": 262,
-      "triangles": 336,
-      "vertices": 533
+      "triangles": 376,
+      "vertices": 613
     },
     {
       "part": "bonnet_dam",
       "before_additions": 207,
-      "triangles": 281,
-      "vertices": 480
+      "triangles": 321,
+      "vertices": 560
     },
     {
       "part": "boot_ok",
@@ -97,14 +98,14 @@
     {
       "part": "chassis_vlo",
       "before_additions": 230,
-      "triangles": 342,
-      "vertices": 666
+      "triangles": 664,
+      "vertices": 1350
     },
     {
       "part": "bump_front_ok",
       "before_additions": 144,
-      "triangles": 182,
-      "vertices": 184
+      "triangles": 252,
+      "vertices": 336
     },
     {
       "part": "plate_front_ok",
@@ -115,8 +116,8 @@
     {
       "part": "bump_front_dam",
       "before_additions": 89,
-      "triangles": 127,
-      "vertices": 176
+      "triangles": 197,
+      "vertices": 328
     },
     {
       "part": "plate_front_dam",
@@ -127,8 +128,8 @@
     {
       "part": "bump_rear_ok",
       "before_additions": 106,
-      "triangles": 130,
-      "vertices": 124
+      "triangles": 214,
+      "vertices": 304
     },
     {
       "part": "plate_rear_ok",
@@ -139,8 +140,8 @@
     {
       "part": "bump_rear_dam",
       "before_additions": 84,
-      "triangles": 108,
-      "vertices": 124
+      "triangles": 192,
+      "vertices": 304
     },
     {
       "part": "plate_rear_dam",
@@ -151,8 +152,8 @@
     {
       "part": "chassis",
       "before_additions": 1751,
-      "triangles": 1851,
-      "vertices": 2612
+      "triangles": 1907,
+      "vertices": 2740
     },
     {
       "part": "exhaust_ok",

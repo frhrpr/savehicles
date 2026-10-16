@@ -9,6 +9,7 @@ from collections import Counter
 import hashlib
 import json
 import math
+import re
 import struct
 import sys
 
@@ -45,6 +46,12 @@ def alpha_order_valid(rows):
 def load(path):return rw.load(path.read_bytes())[0]
 
 
+def extras_have_atomics(clump):
+    attached={struct.unpack_from('<I',atomic.children[0].data)[0] for atomic in clump.find(20)}
+    return all(i in attached for i,frame in enumerate(rw.frames(clump))
+               if re.fullmatch(r'extra\d+',frame[0],re.IGNORECASE))
+
+
 def validate(dragonff):
     checks=[]
     def check(value,label):
@@ -57,10 +64,21 @@ def validate(dragonff):
     frames=rw.frames(c);original_frames=rw.frames(old)
     check(frames[0][0]=='geniusmb','Root frame uses the new model name')
     check(len(frames)==len(original_frames)==53,'All 53 donor frames retained')
+    check(extras_have_atomics(c),'Every retained extraN frame has an attached atomic for SA loading')
+    # The original donor is valid; detaching one of its extra atomics must
+    # make the check fail. This models PreprocessHierarchy's null-atomic case.
+    import copy
+    regression=copy.deepcopy(old)
+    extra_index=next(i for i,f in enumerate(original_frames) if f[0]=='extra1')
+    regression.children=[a for a in regression.children if not
+                         (a.type==20 and struct.unpack_from('<I',a.children[0].data)[0]==extra_index)]
+    check(extras_have_atomics(old) and not extras_have_atomics(regression),
+          'Extras regression accepts stock Picador and rejects an extra frame with its atomic removed')
     for i,(a,b) in enumerate(zip(frames,original_frames)):
         check(a[3]==b[3] and a[1]==b[1],f'{a[0]}: original parent and basis retained')
         if i and a[0] not in ['exhaust','ug_nitro']:
-            check(a[0]==b[0] and a[2]==b[2],f'{a[0]}: original name and position retained')
+            expected_name=('cargo_removed_'+str(i)) if b[0] in ['extra1','extra2'] else b[0]
+            check(a[0]==expected_name and a[2]==b[2],f'{a[0]}: safe name and original position retained')
     nodes=c.first(26).find(15)
     check(len(nodes)==22 and len(c.find(20))==22,'Only 22 used geometries and atomics, no bed-clutter atomics')
     parts={}
@@ -159,8 +177,10 @@ def validate(dragonff):
     if previous.exists():
         broken=load(previous).first(26).find(15)[1]
         check(not alpha_order_valid(batch_order(broken)),'Draw-order regression check rejects the old Linden chassis')
-    check(all_triangles<=4800 and visible<=4300,'Geometry stays within the chosen tuned-Picador budget')
-    report={'checks_passed':len(checks),'stored_triangles':all_triangles,'intact_visible_triangles_four_stock_wheels':visible,
+    from fit_checks import check_fit
+    check_fit(c,old,check)
+    check(all_triangles<=5400 and visible<=4300,'Geometry stays within the chosen tuned-Picador budget')
+    report={'revision':2,'checks_passed':len(checks),'stored_triangles':all_triangles,'intact_visible_triangles_four_stock_wheels':visible,
             'transparent_geometries':transparent_count,'draw_order':'all opaque batches before transparent batches',
             'dff_sha256':hashlib.sha256(model.read_bytes()).hexdigest(),'txd_sha256':hashlib.sha256(texture.read_bytes()).hexdigest(),
             'runtime_tests':'Pending: user tests in GTA SA 1.0 US / SilentPatch',

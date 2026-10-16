@@ -118,3 +118,18 @@ the supplied stock references. GTA runtime checks remain the user's step.
 Next modelling step: establish new dimensions and front/side silhouette, check
 occupant fit and hinge/wheel positions, then build the shell. Do not begin with
 a deformation of Bobcat's exterior mesh.
+
+
+## Extra-frame load invariant (Geniusmobile revision 2)
+
+The user's in-game stock/custom component swap isolated a load crash to empty
+`extra1` and `extra2` frames. Stock optional cargo atomics had been dropped but
+the special frame names remained. In SA's
+[`CVehicleModelInfo::PreprocessHierarchy`](https://github.com/gta-reversed/gta-reversed/blob/master/source/game_sa/Models/VehicleModelInfo.cpp),
+the extras path gets the first object on the frame and removes that atomic from
+the clump without a null check. Every retained `extraN` frame must therefore
+have an atomic. When removing extras, remove or rename the frames as well;
+renaming preserves all frame indices and transforms. The Geniusmobile build
+renames only atomic-less extra frames, and validation accepts the stock donor
+but rejects a copy with one extra atomic detached. A successful generic DFF
+import alone cannot establish that SA's preprocessing will accept a hierarchy.

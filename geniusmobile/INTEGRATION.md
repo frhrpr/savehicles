@@ -5,6 +5,17 @@ existing vehicle ID, handling ID, audio configuration and game-name text key.
 In its IDE entry, change the **TXD column from `picador` to `geniusmb`**. The
 new dictionary retains the two Picador textures and adds `genius_detail128`.
 
+## Revision 2 — replace the old DFF
+
+Fixes the load crash from empty `extra1`/`extra2` frames by renaming them to
+ordinary `cargo_removed_*` frames. Every remaining `extraN` must have an atomic;
+removing only its geometry/atomic is unsafe in SA. The build and validator now
+enforce this. The TXD is unchanged from revision 1.
+
+Rebuilt the sills and lower aprons with actual joins to the donor body/bumper
+surfaces. Replaced the tall box scoop with a lower arched opening, rounded
+shoulders and a tapered rear ramp. Its mouth remains opaque-backed.
+
 ## Built into the model
 
 - A fitted, forward-facing ram-air scoop, on both bonnet variants.
@@ -46,9 +57,15 @@ tailgate flag. This is separate from the handling-flags field.
 
 ## Checked here / pending in game
 
-477 asset checks passed, including transparent-last draw order, original lamp
+Your revision-1 in-game diagnosis confirmed that geometry, textures, collision,
+lamps, paint and draw order loaded correctly once the empty extras were fixed.
+Revision 2 has not yet been tested in GTA here.
+
+507 asset checks passed, including transparent-last draw order, original lamp
 geometry/material preservation, paint modulation, damage/LOD structure, native
-format reads, and a collision probe hitting the new bed cover. The validator
+format reads, a collision probe hitting the new bed cover, and independent
+attachment probes for the sills, both bumper variants and both scoop variants.
+The validator
 also rejects the old Linden chassis's incorrect draw order. Native Blender
 source reopens with embedded, readable textures.
 

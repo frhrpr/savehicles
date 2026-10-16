@@ -9,6 +9,7 @@ import copy
 import hashlib
 import json
 import math
+import re
 import struct
 import sys
 
@@ -119,6 +120,31 @@ class Part:
         self.added_triangles=0
         self.cache={}
         self.deform=None
+        self.surface_points=[self.world(p) for p in self.g.pos]
+        self.surface_triangles=list(self.g.tris)
+        self.smooth_groups={}
+        self.hood_height=None
+
+    def sample(self, axis, a, b, highest=True):
+        """Intersect the unchanged donor, projecting onto the other two axes."""
+        j,k=[i for i in range(3) if i!=axis]
+        hits=[]
+        for ia,ib,ic,_ in self.surface_triangles:
+            u,v,w=[self.surface_points[i] for i in (ia,ib,ic)]
+            den=(v[k]-w[k])*(u[j]-w[j])+(w[j]-v[j])*(u[k]-w[k])
+            if abs(den)<1e-10: continue
+            q=((v[k]-w[k])*(a-w[j])+(w[j]-v[j])*(b-w[k]))/den
+            r=((w[k]-u[k])*(a-w[j])+(u[j]-w[j])*(b-w[k]))/den
+            if min(q,r,1-q-r)>=-1e-5:
+                hits.append(q*u[axis]+r*v[axis]+(1-q-r)*w[axis])
+        if hits: return (max if highest else min)(hits)
+        return min(self.surface_points,key=lambda p:(p[j]-a)**2+(p[k]-b)**2)[axis]
+
+    def outward(self, points, kind, direction, smooth=None):
+        n=cross(tuple(b-a for a,b in zip(points[0],points[1])),
+                tuple(b-a for a,b in zip(points[0],points[2])))
+        if sum(a*b for a,b in zip(n,direction))<0: points=list(reversed(points))
+        self.face(points,kind,smooth=smooth)
 
     def mat(self, kind):
         if kind in self.cache: return self.cache[kind]
@@ -148,7 +174,7 @@ class Part:
     def normal_local(self, n):
         return tuple(sum(n[k]*self.rotation[j][k] for k in range(3)) for j in range(3))
 
-    def face(self, points, kind, uvs=None, normal=None):
+    def face(self, points, kind, uvs=None, normal=None, smooth=None):
         if self.deform:
             points=[self.deform(p) for p in points]
         if normal is None:
@@ -157,7 +183,12 @@ class Part:
             rect={'paint':(3,44,28,120),'stripe':(3,44,28,120),'chrome':(36,40,60,119),
                   'rubber':(70,44,88,120),'bed':(99,65,125,123),'intake':(2,2,125,30)}[kind]
             u0,v0,u1,v1=(a/128 for a in rect)
-            uvs=[(u0,v1),(u1,v1),(u1,v0),(u0,v0)][:len(points)]
+            if kind=='intake':
+                xs=[p[0] for p in points];zs=[p[2] for p in points]
+                uvs=[(u0+(u1-u0)*(p[0]-min(xs))/(max(xs)-min(xs) or 1),
+                      v1-(v1-v0)*(p[2]-min(zs))/(max(zs)-min(zs) or 1)) for p in points]
+            else:
+                uvs=[(u0,v1),(u1,v1),(u1,v0),(u0,v0)][:len(points)]
         ids=[]
         for p,uv in zip(points,uvs):
             ids.append(len(self.g.pos))
@@ -165,6 +196,10 @@ class Part:
             if self.g.nrm is not None: self.g.nrm.append(self.normal_local(normal))
             for layer in self.g.uvs: layer.append(uv)
             if self.g.prelit is not None: self.g.prelit.append(bytes((235,235,235,255)))
+        if smooth:
+            for i in ids:
+                key=(smooth,tuple(round(v,6) for v in self.g.pos[i]))
+                self.smooth_groups.setdefault(key,[]).append(i)
         for j in range(1,len(ids)-1):
             self.g.tris.append((ids[0],ids[j],ids[j+1],self.mat(kind)))
             self.added_triangles+=1
@@ -179,6 +214,10 @@ class Part:
 
     def finalize(self):
         g=self.g
+        if g.nrm is not None:
+            for ids in self.smooth_groups.values():
+                n=normalized(tuple(sum(g.nrm[i][j] for i in ids) for j in range(3)))
+                for i in ids: g.nrm[i]=n
         # Clipping at a vertex can leave zero-area triangles. Discard those
         # rather than exporting invalid faces or relying on Blender to drop them.
         def valid(tri):
@@ -234,68 +273,108 @@ def add_cover(part, lod=False):
 
 
 def add_scoop(part, damaged=False, lod=False):
-    # A forward-facing, fitted ram-air scoop. Mouth and sides are real
-    # geometry; the intake is backed instead of exposing the engine bay.
-    dent = -0.035 if damaged else 0
-    y0,y1,y2=1.10,1.38,2.15
-    z0,z1,z2=.305,.455+dent,.535+dent
-    width0,width1,width2=.34,.40,.44
-    # Segmented top keeps both racing bands aligned to the original stripes.
-    for ya,yb,za,zb,wa,wb in [(y0,y1,z0,z1,width0,width1),(y1,y2,z1,z2,width1,width2)]:
-        breaks_a=[-wa,-.29,-.05,.05,.29,wa]
-        breaks_b=[-wb,-.29,-.05,.05,.29,wb]
-        for i in range(5):
-            kind='stripe' if i in [1,3] else 'paint'
-            part.face([(breaks_a[i],ya,za),(breaks_a[i+1],ya,za),
-                       (breaks_b[i+1],yb,zb),(breaks_b[i],yb,zb)],kind)
-    for sign in [-1,1]:
-        points=[(sign*width0,y0,z0),(sign*width1,y1,z1),(sign*width2,y2,z2),
-                (sign*.44,y2,.278),(sign*.34,y0,.278)]
-        if sign>0: points.reverse()
-        part.face(points,'paint')
-    # Slightly recessed opaque grille is behind an open body-colour lip.
-    part.face([(-.415,y2-.008,.30),(-.415,y2-.008,z2-.025),(.415,y2-.008,z2-.025),(.415,y2-.008,.30)],'intake')
-    part.box((-.445,y2-.018,z2-.025),(.445,y2+.006,z2+.006),'paint')
-    part.box((-.445,y2-.018,.278),(.445,y2+.006,.301),'paint')
-    if not lod:
-        for x in [-.442,.426]:
-            part.box((x,y2-.018,.299),(x+.016,y2+.006,z2-.024),'paint')
+    # Low arched shell with rounded shoulders; the rear ramp grows out of the
+    # actual bonnet. A closed recessed mouth never exposes the engine bay.
+    sections=[(1.10,.34,.005),(1.35,.36,.065),(1.72,.39,.145),(2.12,.40,.205)]
+    def row(y,w,h):
+        xs=sorted(set([-w,-w*.90,-.29,-.05,.05,.29,w*.90,w]))
+        return [(x,y,part.hood_height(x,y)+.003+h*math.sqrt(max(0,1-(abs(x)/w)**4))) for x in xs]
+    rows=[row(*r) for r in sections]
+    for ra,rb in zip(rows,rows[1:]):
+        for i in range(len(ra)-1):
+            mid=(ra[i][0]+ra[i+1][0])/2
+            kind='stripe' if .05<abs(mid)<.29 else 'paint'
+            part.outward([ra[i],ra[i+1],rb[i+1],rb[i]],kind,(0,0,1),smooth='scoop')
+    # The narrow lower return overlaps the bonnet rather than hovering above it.
+    for side in [0,-1]:
+        for ra,rb in zip(rows,rows[1:]):
+            a,b=ra[side],rb[side]
+            part.outward([a,b,(b[0],b[1],b[2]-.012),(a[0],a[1],a[2]-.012)],'paint',(-1 if side==0 else 1,0,0))
+    back=rows[0]
+    for i in range(len(back)-1):
+        a,b=back[i:i+2]
+        part.outward([a,b,(b[0],b[1],part.hood_height(b[0],b[1])-.009),
+                      (a[0],a[1],part.hood_height(a[0],a[1])-.009)],'paint',(0,-1,0))
+    outer=rows[-1];y=sections[-1][0]
+    inner=[(x*.85,y-.035,part.hood_height(x,y)+.025+(z-part.hood_height(x,y)-.003)*.72) for x,_,z in outer]
+    # Rounded upper rim follows the shell; stripe boundaries remain colour 3.
+    for i in range(len(outer)-1):
+        mid=(outer[i][0]+outer[i+1][0])/2
+        part.outward([outer[i],outer[i+1],inner[i+1],inner[i]],
+                     'stripe' if .05<abs(mid)<.29 else 'paint',(0,1,0),smooth='rim')
+    bottom=[(p[0],y-.035,part.hood_height(p[0],y)+.025) for p in inner]
+    for i in range(len(inner)-1):
+        mid=(outer[i][0]+outer[i+1][0])/2
+        o0,o1=outer[i:i+2]
+        lower0=(o0[0],y,part.hood_height(o0[0],y)-.009)
+        lower1=(o1[0],y,part.hood_height(o1[0],y)-.009)
+        part.outward([lower0,lower1,bottom[i+1],bottom[i]],
+                     'stripe' if .05<abs(mid)<.29 else 'paint',(0,1,0))
+        # One opaque vertical slice per arch segment, with projected grille UVs.
+        part.outward([bottom[i],bottom[i+1],inner[i+1],inner[i]],'intake',(0,1,0))
+    for side in [0,-1]:
+        o=outer[side];low=(o[0],y,part.hood_height(o[0],y)-.009)
+        part.outward([o,inner[side],bottom[side],low],'paint',(0,1,0))
 
 
-def add_front_valance(part, damaged=False, lod=False):
-    # Fits below the original bright bumper, leaving both number plates free.
-    z=-.565 if not damaged else -.55
-    xs=[-1.05,-.97,-.40,.40,.97,1.05]
-    for i in range(len(xs)-1):
-        x0,x1=xs[i:i+2]
-        y0=2.86-.045*abs(x0);y1=2.86-.045*abs(x1)
-        part.face(list(reversed([(x0,y0,z),(x1,y1,z),(x1,y1+.035,-.389),(x0,y0+.035,-.389)])),'paint')
-    part.face(list(reversed([(-1.05,2.81,z),(-1.05,2.855,-.389),(-1.08,2.65,-.389),(-1.08,2.65,z)])),'paint')
-    part.face(list(reversed([(1.05,2.81,z),(1.08,2.65,z),(1.08,2.65,-.389),(1.05,2.855,-.389)])),'paint')
-    part.box((-.405,2.846,-.548),(.405,2.86,-.455),'intake')
-    if not lod:
-        part.box((-1.05,2.75,z-.018),(1.05,2.86,z),'rubber')
+def add_valance(part, front, sampler=None, lod=False):
+    # Root profiles enter the ORIGINAL chrome surface. Lower profiles slope
+    # inward and wrap the corners, instead of hanging as a flat separate plank.
+    sampler=sampler or part
+    sign=1 if front else -1
+    xs=[-1.065,-.94,-.65,-.40,0,.40,.65,.94,1.065]
+    profiles=[]
+    for x in xs:
+        surface=sampler.sample(1,x,-.335,highest=front)
+        depth=.19 if abs(x)<.95 else .105
+        # Recess the rear centre behind the number plate.
+        inset=.075*max(0,1-abs(x)/.40) if not front else 0
+        y=surface-sign*inset
+        profiles.append([(x,surface-sign*.015,-.330),
+                         (x,y-sign*.010,-.375),
+                         (x,y-sign*.040,-.330-depth*.66),
+                         (x,y-sign*.075,-.330-depth),
+                         (x,y-sign*.135,-.330-depth+.012),
+                         (x,surface-sign*.115,-.330)])
+    for a,b in zip(profiles,profiles[1:]):
+        for j in range(6):
+            k=(j+1)%6
+            kind='intake' if front and abs((a[0][0]+b[0][0])/2)<.41 and j==2 else 'paint'
+            direction=(0,sign,0) if j<3 else (0,0,-1) if j==3 else (0,-sign,0) if j==4 else (0,0,1)
+            part.outward([a[j],b[j],b[k],a[k]],kind,direction)
+    for i,sgn in [(0,-1),(-1,1)]:
+        # Convex cross-section, triangulated around its interior for robust caps.
+        row=profiles[i]
+        center=tuple(sum(p[j] for p in row)/len(row) for j in range(3))
+        for j in range(len(row)):
+            part.outward([center,row[j],row[(j+1)%len(row)]],'paint',(sgn,0,0))
+
+
+def add_front_valance(part, damaged=False, lod=False, sampler=None):
+    add_valance(part,True,sampler,lod)
 
 
 def add_sills(part, lod=False):
+    # At z=-.493 the stock rocker reaches x=1.016: the inner root enters it.
+    # Highest point stays below both original door variants, including opening.
     for sign in [-1,1]:
-        x=sign*1.105
-        # Forward and rear tapers keep these between the wheel openings.
-        points=[(x,-.89,-.50),(x,1.22,-.50),(sign*1.165,1.10,-.558),(sign*1.165,-.78,-.558)]
-        if sign>0: points.reverse()
-        part.face(points,'paint')
-        points=[(sign*1.165,-.78,-.558),(sign*1.165,1.10,-.558),(sign*1.04,1.10,-.558),(sign*1.04,-.78,-.558)]
-        if sign>0: points.reverse()
-        part.face(points,'rubber')
-        if not lod:
-            part.box((min(x,sign*1.165),-.78,-.51),(max(x,sign*1.165),1.10,-.492),'paint')
+        rows=[]
+        for y,width,bottom in [(-.91,1.021,-.533),(-.76,1.10,-.557),(1.10,1.10,-.557),(1.30,1.021,-.533)]:
+            rows.append([(sign*.975,y,-.493),(sign*1.014,y,-.493),
+                         (sign*(1.014+(width-1.014)*.55),y,-.507),
+                         (sign*width,y,bottom+.012),(sign*(width-.012),y,bottom),
+                         (sign*.975,y,-.533)])
+        for a,b in zip(rows,rows[1:]):
+            for j in range(6):
+                k=(j+1)%6
+                direction=(0,0,1) if j==0 else (sign,0,0) if j in [1,2,3] else (0,0,-1) if j==4 else (-sign,0,0)
+                part.outward([a[j],b[j],b[k],a[k]],'paint',direction)
+        for row,direction in [(rows[0],(0,-1,0)),(rows[-1],(0,1,0))]:
+            for j in range(1,len(row)-1):part.outward([row[0],row[j],row[j+1]],'paint',direction)
 
 
-def add_rear_valance(part, damaged=False, lod=False):
-    z0=-.535 if not damaged else -.55
-    part.box((-1.075,-2.825,z0),(1.075,-2.755,-.386),'paint')
-    if not lod:
-        part.box((-.48,-2.836,z0-.009),(.48,-2.825,-.432),'rubber')
+def add_rear_valance(part, damaged=False, lod=False, sampler=None):
+    add_valance(part,False,sampler,lod)
 
 
 def add_exhaust(part):
@@ -322,10 +401,10 @@ def extend_collision(clump, dragonff):
     before={'spheres':len(m.spheres),'boxes':len(m.boxes),'faces':len(m.mesh_faces),'shadow_faces':len(m.shadow_faces)}
     m.model_name='geniusmb'
     boxes=[((-.945,-2.575,.285),(.945,-.605,.333),0),
-           ((-1.05,2.72,-.583),(1.05,2.89,-.389),3),
-           ((-1.075,-2.836,-.55),(1.075,-2.755,-.386),4),
-           ((-1.165,-.78,-.558),(-1.04,1.10,-.492),0),
-           ((1.04,-.78,-.558),(1.165,1.10,-.492),0)]
+           ((-1.065,2.62,-.520),(1.065,2.94,-.330),3),
+           ((-1.065,-2.85,-.520),(1.065,-2.61,-.330),4),
+           ((-1.10,-.91,-.557),(-.975,1.30,-.493),0),
+           ((.975,-.91,-.557),(1.10,1.30,-.493),0)]
     def add_collision_box(lo,hi,component):
         m.boxes.append(col.TBox(lo,hi,col.TSurface(63,component,187,128)))
         # The cover and skirt physics also need a mesh for cameras/bullets.
@@ -340,7 +419,7 @@ def extend_collision(clump, dragonff):
         m.shadow_faces.extend(col.TFace(a+base,b+base,c+base,63,128) for a,b,c in faces)
     for lo,hi,component in boxes: add_collision_box(lo,hi,component)
     # Small scoop collider, backed by the stock bonnet's collision.
-    m.boxes.append(col.TBox((-.44,1.38,.278),(.44,2.156,.541),col.TSurface(63,1,187,128)))
+    m.boxes.append(col.TBox((-.40,1.35,.270),(.40,2.12,.495),col.TSurface(63,1,187,128)))
     m.face_groups=[]  # No stale face-group regions after adding geometry.
     lo=list(m.bounds.min);hi=list(m.bounds.max)
     for b in m.boxes:
@@ -363,8 +442,15 @@ def build(dragonff):
     rootname=clump.first(14).find(3)[0].first(0x253f2fe)
     rootname.data=b'geniusmb'
     geometry_nodes=clump.first(26).find(15)
-    # Drop the unused extra geometries and reindex atomics; keep their named
-    # frames so existing mission visibility calls remain harmless.
+    # SA treats extraN names as a promise of an attached atomic. The optional
+    # cargo atomics are gone, so remove their special meaning without changing
+    # any frame indices, parent relationships or transforms.
+    atomic_frames={struct.unpack_from('<I',a.children[0].data)[0] for a in clump.find(20)}
+    for i,frame in enumerate(frames):
+        if re.fullmatch(r'extra\d+',frame[0],re.IGNORECASE) and i not in atomic_frames:
+            clump.first(14).find(3)[i].first(0x253f2fe).data=('cargo_removed_'+str(i)).encode()
+    frames=rw.frames(clump)
+    # Drop unused cargo geometries and reindex the remaining atomics.
     used=sorted({struct.unpack_from('<II',a.children[0].data)[1] for a in clump.find(20)})
     remap={old:new for new,old in enumerate(used)}
     glist=clump.first(26)
@@ -401,6 +487,13 @@ def build(dragonff):
     def damaged_scoop(point):
         x,y,z=point
         return x,y,z+height('bonnet_dam',x,y)-height('bonnet_ok',x,y)
+    samplers={}
+    for atomic in clump.find(20):
+        fi,gi=struct.unpack_from('<II',atomic.children[0].data)
+        name=frames[fi][0]
+        if name in ['bump_front_ok','bump_rear_ok']:
+            r,p=rw.frame_to_root(frames,fi)
+            samplers[name]=Part(name,geometry_nodes[gi],r,p)
     stats=[]
     for atomic in clump.find(20):
         fi,gi=struct.unpack_from('<II',atomic.children[0].data)
@@ -408,11 +501,12 @@ def build(dragonff):
         r,p=rw.frame_to_root(frames,fi)
         part=Part(name,geometry_nodes[gi],r,p)
         before=len(part.g.tris)
+        part.hood_height=lambda x,y:height('bonnet_ok',x,y)
         if name=='chassis': add_cover(part);add_sills(part)
         elif name=='chassis_vlo':
             part.g.tris=[t for t in part.g.tris if not any(part.world(part.g.pos[i])[2]>.82 for i in t[:3])]
             add_cover(part,True);add_sills(part,True)
-            add_scoop(part,lod=True);add_front_valance(part,lod=True);add_rear_valance(part,lod=True)
+            add_scoop(part,lod=True);add_front_valance(part,lod=True,sampler=samplers['bump_front_ok']);add_rear_valance(part,lod=True,sampler=samplers['bump_rear_ok'])
         elif name in ['bonnet_ok','bonnet_dam']:
             if name=='bonnet_dam': part.deform=damaged_scoop
             add_scoop(part)
@@ -436,7 +530,7 @@ def build(dragonff):
     texture=make_txd(make_atlas())
     (BASE/'dist/geniusmb.dff').write_bytes(model)
     (BASE/'dist/geniusmb.txd').write_bytes(texture)
-    report={'model':'geniusmb','donor':'picador','donor_sha256':hashlib.sha256(original).hexdigest(),
+    report={'revision':2,'model':'geniusmb','donor':'picador','donor_sha256':hashlib.sha256(original).hexdigest(),
             'dff_sha256':hashlib.sha256(model).hexdigest(),'txd_sha256':hashlib.sha256(texture).hexdigest(),
             'stored_triangles':sum(s['triangles'] for s in stats),'stripe_pieces':stripe_counts,
             'collision':collision_report,'parts':stats,'texture':{'name':'genius_detail128','size':[128,128],'mip_levels':8}}

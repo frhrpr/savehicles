@@ -10,6 +10,25 @@ a fitted scoop, lower body kit, a striped hard bed cover and twin exhausts.
 **[the integration note](INTEGRATION.md)** before replacing the existing model.
 The new TXD name and mission upgrade changes matter.
 
+## Revision 2
+
+Fixes the load crash found in the first Geniusmobile: removing optional cargo
+atomics left `extra1`/`extra2` frames behind. SA assumes each `extraN` frame has
+an atomic. Those two unused frames now have ordinary names, preserving the
+original frame indices and transforms; the validator exercises this failure.
+
+The lower kit now enters the original rocker/bumper surfaces instead of
+floating outside them. The closed sill profiles taper into the wheel openings,
+and both aprons wrap the bumper corners and slope inward below them. The scoop
+has a lower arched mouth, rounded shoulders and a rear ramp fitted to the
+bonnet. Its opening is opaque-backed, and its damaged variant follows the
+original bonnet dent. The TXD and mission integration are unchanged.
+
+Independent surface probes verify the exported trim intersects the donor at
+both sides and the centre, the doors clear the sills, and the scoop mouth is
+backed. A deliberately detached sill fails the attachment probe. These are
+Blender previews and offline checks; this revision still needs an in-game test.
+
 ## Contents
 
 - `dist/geniusmb.dff`, `dist/geniusmb.txd`: game assets for your IMG/IDE pipeline.
@@ -33,8 +52,8 @@ mission upgrades for context; no separate high-detail body is used.
 
 | Metric | Stock Picador | Geniusmobile |
 |---|---:|---:|
-| Stored triangles, including damage/LOD and donor optional extras | 3,207 | 4,306 (extras removed) |
-| Intact visible triangles with four stock wheels, excluding optional cargo | 2,786 | 3,510 |
+| Stored triangles, including damage/LOD and donor optional extras | 3,207 | 5,072 (extras removed) |
+| Intact visible triangles with four stock wheels, excluding optional cargo | 2,786 | 3,760 |
 | Original damage spheres retained | 32 | 32 |
 | Collision boxes | 0 | 6 |
 | Collision mesh triangles | 12 | 72 |
@@ -57,7 +76,7 @@ the user's original geometry-cutting helper. Collision retains the donor's
 component/damage spheres and extends it for the cover, scoop and lower trim;
 the base shell has not been stretched or resized.
 
-All 477 asset checks passed, and a repeat build reproduces the DFF/TXD/atlas
+All 507 asset checks passed, and a repeat build reproduces the DFF/TXD/atlas
 byte for byte. This establishes offline file consistency. It does not replace
 the pending game checks listed in the integration note.
 

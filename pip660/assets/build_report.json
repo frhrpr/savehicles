@@ -1,0 +1,123 @@
+{
+  "model": "pip660",
+  "rig_reference": "manana",
+  "new_meshes": "all body, interior, wheels, damage and LOD geometries",
+  "dimensions": {
+    "length": 3.11,
+    "body_width": 1.46,
+    "width_with_mirrors": 1.73,
+    "height": 1.715,
+    "wheelbase": 1.92,
+    "wheel_diameter": 0.58
+  },
+  "stored_triangles": 2247,
+  "visible_triangles_four_wheels": 1941,
+  "collision": {
+    "spheres": 10,
+    "boxes": 1,
+    "mesh_triangles": 36,
+    "shadow_triangles": 36
+  },
+  "parts": [
+    {
+      "part": "wheel",
+      "triangles": 144,
+      "vertices": 312
+    },
+    {
+      "part": "chassis_vlo",
+      "triangles": 212,
+      "vertices": 440
+    },
+    {
+      "part": "bonnet_ok",
+      "triangles": 60,
+      "vertices": 144
+    },
+    {
+      "part": "bonnet_dam",
+      "triangles": 60,
+      "vertices": 144
+    },
+    {
+      "part": "bump_rear_ok",
+      "triangles": 82,
+      "vertices": 172
+    },
+    {
+      "part": "bump_rear_dam",
+      "triangles": 82,
+      "vertices": 172
+    },
+    {
+      "part": "boot_ok",
+      "triangles": 38,
+      "vertices": 76
+    },
+    {
+      "part": "boot_dam",
+      "triangles": 38,
+      "vertices": 76
+    },
+    {
+      "part": "door_lf_ok",
+      "triangles": 118,
+      "vertices": 252
+    },
+    {
+      "part": "door_lf_dam",
+      "triangles": 118,
+      "vertices": 252
+    },
+    {
+      "part": "windscreen_ok",
+      "triangles": 26,
+      "vertices": 52
+    },
+    {
+      "part": "windscreen_dam",
+      "triangles": 26,
+      "vertices": 52
+    },
+    {
+      "part": "door_rf_ok",
+      "triangles": 118,
+      "vertices": 252
+    },
+    {
+      "part": "door_rf_dam",
+      "triangles": 118,
+      "vertices": 252
+    },
+    {
+      "part": "bump_front_ok",
+      "triangles": 84,
+      "vertices": 176
+    },
+    {
+      "part": "bump_front_dam",
+      "triangles": 84,
+      "vertices": 176
+    },
+    {
+      "part": "chassis",
+      "triangles": 799,
+      "vertices": 1601
+    },
+    {
+      "part": "exhaust_ok",
+      "triangles": 40,
+      "vertices": 88
+    }
+  ],
+  "texture": {
+    "name": "pip_detail128",
+    "size": [
+      128,
+      128
+    ],
+    "mips": 8
+  },
+  "dff_sha256": "4ae349a59f885996bf2f3558e6ff4fcd9821b5894a5b849251e659ffb2259c7c",
+  "txd_sha256": "ac5f8abbc23341938a7d3bcd74d5227c2496cc90f53263e344e680d421f0412d"
+}

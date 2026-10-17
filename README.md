@@ -1,8 +1,11 @@
 # GTA SA vehicle prototypes
 
-The current SAVibe build is **[the Geniusmobile](geniusmobile/README.md)**:
-a Picador street/show-truck conversion with game assets, source and integration
-notes. The earlier Linden proof of concept is documented below.
+The newest vehicle is **[the Pip 660](pip660/README.md)**, a tiny two-seat city
+car with a newly authored body, interior, wheels, damage parts and collision.
+
+The **[Geniusmobile](geniusmobile/README.md)** is the Picador street/show-truck
+conversion. Both include game assets, editable source and integration notes.
+The earlier Linden proof of concept is documented below.
 
 # Linden 1800 — GTA San Andreas vehicle MVP
 

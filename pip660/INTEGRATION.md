@@ -1,4 +1,7 @@
-# Pip 660 — integration
+# Pip — integration
+
+The displayed vehicle name is **Pip**. Map your game-name/GXT key to `Pip`;
+`PIP660` in the supplied snippet is an internal key, not the display label.
 
 Use `pip660.dff` and `pip660.txd` together in your IMG. Give the vehicle a free
 ID through your existing loader and configure its audio and game-name key in

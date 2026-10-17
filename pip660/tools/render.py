@@ -1,4 +1,4 @@
-"""Render the delivered Pip 660, including damage and offline hinge poses.
+"""Render the delivered Pip, including damage and offline hinge poses.
 
 blender -b --python-exit-code 1 --python pip660/tools/render.py -- pip660/dist/pip660.dff pip660/previews/pip
 """

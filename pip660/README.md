@@ -1,10 +1,10 @@
-# Pip 660
+# Pip
 
 A fictional early-1990s two-seat city car for classic PC GTA SA. Tall glass,
 a short nose, small pressed-steel wheels, simple plastic bumpers and a cream
 roof over sage-green paint give it a distinct shape among the stock compacts.
 
-![Pip 660, front](previews/pip_front.png)
+![Pip, front](previews/pip_front.png)
 
 **[Download the game assets](dist/pip660.zip)** ·
 **[Read the integration note](INTEGRATION.md)** ·
@@ -29,7 +29,7 @@ is used in the exported car. The earlier Geniusmobile is unchanged.
 
 ## Dimensions and budget
 
-| Metric | Pip 660 |
+| Metric | Pip |
 |---|---:|
 | Overall length | 3.11 m |
 | Body width / width including mirrors | 1.46 / 1.73 m |

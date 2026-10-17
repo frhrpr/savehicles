@@ -1,6 +1,6 @@
 # GTA SA vehicle prototypes
 
-The newest vehicle is **[the Pip 660](pip660/README.md)**, a tiny two-seat city
+The newest vehicle is **[the Pip](pip660/README.md)**, a tiny two-seat city
 car with a newly authored body, interior, wheels, damage parts and collision.
 
 The **[Geniusmobile](geniusmobile/README.md)** is the Picador street/show-truck

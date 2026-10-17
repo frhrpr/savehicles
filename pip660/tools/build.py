@@ -1,4 +1,4 @@
-"""Build the Pip 660: new city-car meshes using the stock Manana hierarchy.
+"""Build the Pip: new city-car meshes using the stock Manana hierarchy.
 Python 3.12+, Pillow; DragonFF is used only for embedded COL3 serialization.
 """
 from pathlib import Path
@@ -69,7 +69,7 @@ def atlas():
         d.line((x,47,x+5,41),fill=(217,207,170))
         for a in range(0,360,60):
             r=math.radians(a);d.point((round(x+8*math.cos(r)),round(46+8*math.sin(r))),fill=(208,211,188))
-    d.rectangle((64,32,95,63),fill=(44,52,47));d.text((66,36),'PIP',font=font,fill=(200,201,181));d.text((66,48),'660',font=font,fill=(191,193,176))
+    d.rectangle((64,32,95,63),fill=(44,52,47));d.text((72,42),'PIP',font=font,fill=(200,201,181))
     d.rectangle((96,32,127,63),fill=(36,48,46))
     for i in range(11):
         x=98+(i*11)%28;y=34+(i*7)%26

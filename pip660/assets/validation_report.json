@@ -4,7 +4,7 @@
   "stored_triangles": 2247,
   "visible_triangles_four_wheels": 1941,
   "dff_sha256": "4ae349a59f885996bf2f3558e6ff4fcd9821b5894a5b849251e659ffb2259c7c",
-  "txd_sha256": "ac5f8abbc23341938a7d3bcd74d5227c2496cc90f53263e344e680d421f0412d",
+  "txd_sha256": "ecab4af78028ae91102d3b2ff546c9db26b194483cb8b5d8f7d429f21627db72",
   "runtime": "Not tested in GTA; user runtime checks remain pending",
   "checks": [
     "Lossless DFF chunk round trip",
